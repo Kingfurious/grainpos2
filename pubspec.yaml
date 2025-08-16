@@ -66,11 +66,11 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
-      - assets\images\broken rice.jpg
-      - assets\images\brown rice.jpg
-      - assets\images\idli rice.jpg
-      - assets\images\parboiled.jpg
-      - assets\images\premium basmati.jpg
+      - assets/images/broken_rice.jpg
+      - assets/images/brown_rice.jpg
+      - assets/images/idli_rice.jpg
+      - assets/images/parboiled.jpg
+      - assets/images/premium_basmati.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
