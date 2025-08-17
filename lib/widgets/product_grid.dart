@@ -9,12 +9,42 @@ class ProductGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     // The list of products now points to your local asset images.
     final List<Product> products = [
-      Product(name: 'Premium Basmati Rice', sku: 'RICE001', price: 499.00, imageUrl: 'assets/images/premium basmati.jpg'),
-      Product(name: 'Sona Masoori Rice', sku: 'RICE002', price: 599.00, imageUrl: 'assets/images/sona masoori.jpg'),
-      Product(name: 'Idli Rice', sku: 'RICE003', price: 399.00, imageUrl: 'assets/images/idli rice.jpg'),
-      Product(name: 'Parboiled Rice', sku: 'RICE004', price: 449.00, imageUrl: 'assets/images/parboiled.jpg'),
-      Product(name: 'Brown Rice', sku: 'RICE005', price: 699.00, imageUrl: 'assets/images/brown rice.jpg'),
-      Product(name: 'Broken Rice', sku: 'RICE006', price: 299.00, imageUrl: 'assets/images/broken rice.jpg'),
+      Product(
+        name: 'Premium Basmati Rice',
+        sku: 'RICE001',
+        price: 499.00,
+        imageUrl: 'assets/images/premium_basmati.jpg',
+      ),
+      Product(
+        name: 'Sona Masoori Rice',
+        sku: 'RICE002',
+        price: 599.00,
+        imageUrl: 'assets/images/sona_masoori.jpg',
+      ),
+      Product(
+        name: 'Idli Rice',
+        sku: 'RICE003',
+        price: 399.00,
+        imageUrl: 'assets/images/idli_rice.jpg',
+      ),
+      Product(
+        name: 'Parboiled Rice',
+        sku: 'RICE004',
+        price: 449.00,
+        imageUrl: 'assets/images/parboiled.jpg',
+      ),
+      Product(
+        name: 'Brown Rice',
+        sku: 'RICE005',
+        price: 699.00,
+        imageUrl: 'assets/images/brown_rice.jpg',
+      ),
+      Product(
+        name: 'Broken Rice',
+        sku: 'RICE006',
+        price: 299.00,
+        imageUrl: 'assets/images/broken_rice.jpg',
+      ),
     ];
 
     return Container(
