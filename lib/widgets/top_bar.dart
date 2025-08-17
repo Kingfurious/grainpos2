@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shopeasy/screens/management_screen.dart';
+import 'package:shopeasy/screens/billing_screen.dart';
 
 class TopBar extends StatelessWidget {
   const TopBar({super.key});
@@ -11,6 +12,14 @@ class TopBar extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const ManagementScreen()),
+      );
+    }
+
+    // This function handles navigation to the billing screen.
+    void navigateToBillingScreen() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const BillingManagementPage()),
       );
     }
 
@@ -44,13 +53,12 @@ class TopBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 _buildTopButton(context, Icons.delivery_dining, 'Delivery'),
-                _buildTopButton(context, Icons.receipt_long, 'Bills'),
+                // The 'Bills' button now navigates to the billing screen.
+                _buildTopButton(context, Icons.receipt_long, 'Bills', onTap: navigateToBillingScreen),
                 _buildTopButton(context, Icons.book, 'Daybook'),
                 _buildTopButton(context, Icons.pause_circle_outline, 'Hold'),
-                // The 'Product' button now navigates to the management screen.
                 _buildTopButton(context, Icons.add_circle_outline, 'Product', onTap: navigateToManagementScreen),
                 _buildTopButton(context, Icons.people_outline, 'Customer'),
-                // The 'Stock' button also navigates to the management screen.
                 _buildTopButton(context, Icons.inventory_2_outlined, 'Stock', onTap: navigateToManagementScreen),
               ],
             ),
