@@ -1,0 +1,1 @@
+In the lib/temp folder there are two txt files which is similar to the add_product_screen and add_variant_screen in lib/screens. I want you to follow the Ui design as exactyly in the txt files. So make the necessary UI changes in add_product_screen and add_variant_screen

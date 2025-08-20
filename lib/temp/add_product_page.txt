@@ -1,0 +1,439 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_sizes.dart';
+import '../../../core/constants/app_text_styles.dart';
+import '../../../widgets/custom_text_field.dart';
+import 'package:intl/intl.dart';
+import '../../../core/constants/app_colors.dart'; // Added import for AppColors
+
+class AddProductPage extends ConsumerStatefulWidget {
+  const AddProductPage({super.key});
+
+  @override
+  ConsumerState<AddProductPage> createState() => _AddProductPageState();
+}
+
+class _AddProductPageState extends ConsumerState<AddProductPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _productNameController = TextEditingController();
+  final TextEditingController _skuCodeController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _openingStockController = TextEditingController();
+  final TextEditingController _stockDateController = TextEditingController();
+  DateTime? _selectedDate;
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        _stockDateController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
+  }
+
+  void _saveProduct() {
+    if (_formKey.currentState!.validate()) {
+      // TODO: Implement save product logic
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Saving Product...')));
+    }
+  }
+
+  @override
+  void dispose() {
+    _productNameController.dispose();
+    _skuCodeController.dispose();
+    _priceController.dispose();
+    _openingStockController.dispose();
+    _stockDateController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 120, // Adjusted height
+        titleSpacing: 0, // Removed default title spacing
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Padding(
+          padding: const EdgeInsets.only(
+            left: AppSizes.md,
+            top: AppSizes.md,
+            bottom: AppSizes.sm,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Breadcrumbs
+              Row(
+                children: [
+                  Icon(
+                    Icons.home,
+                    size: AppSizes.iconSm,
+                    color: AppColors.textTertiary,
+                  ),
+                  const SizedBox(width: AppSizes.xs),
+                  Text(
+                    'Dashboard',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    size: AppSizes.iconXs,
+                    color: AppColors.textTertiary,
+                  ),
+                  Text(
+                    'Products & Variants',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    size: AppSizes.iconXs,
+                    color: AppColors.textTertiary,
+                  ),
+                  Text(
+                    'Add New Product',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSizes.sm), // Adjusted spacing
+              // Header Title
+              Text('Add New Product', style: AppTextStyles.headlineMedium),
+              // Description
+              Text(
+                'Fill in the details to add a new product',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: AppSizes.md),
+            ],
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          const Divider(
+            height: 1,
+            thickness: 1,
+            color: Colors.grey,
+          ), // Horizontal line
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppSizes.md),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 800,
+                  ), // Fixed width for content
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Product Image Upload Section
+                        Container(
+                          padding: const EdgeInsets.all(AppSizes.md),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.cardRadius,
+                            ),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Product Image',
+                                    style: AppTextStyles.titleMedium,
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppSizes.sm,
+                                      vertical: AppSizes.xs,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(
+                                        AppSizes.radiusSm,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Optional',
+                                      style: AppTextStyles.bodySmall.copyWith(
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: AppSizes.md),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 150,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(
+                                        AppSizes.cardRadius,
+                                      ),
+                                      border: Border.all(
+                                        color: Colors.blue.withOpacity(0.5),
+                                        style: BorderStyle.solid,
+                                      ), // Using solid for now, as dashed is not directly supported
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.camera_alt,
+                                          size: 48,
+                                          color: Colors.blue,
+                                        ),
+                                        const SizedBox(height: AppSizes.sm),
+                                        Text(
+                                          'Upload Product Image',
+                                          style: AppTextStyles.bodyMedium
+                                              .copyWith(color: Colors.blue),
+                                        ),
+                                        Text(
+                                          'JPG, PNG up to 5MB',
+                                          style: AppTextStyles.bodySmall
+                                              .copyWith(
+                                                color: Colors.grey[600],
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppSizes.md),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.info_outline,
+                                              size: AppSizes.iconSm,
+                                              color: Colors.grey[600],
+                                            ),
+                                            const SizedBox(width: AppSizes.xs),
+                                            Text(
+                                              'Recommended size: 800x600px',
+                                              style: AppTextStyles.bodySmall
+                                                  .copyWith(
+                                                    color: Colors.grey[600],
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: AppSizes.xs),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.info_outline,
+                                              size: AppSizes.iconSm,
+                                              color: Colors.grey[600],
+                                            ),
+                                            const SizedBox(width: AppSizes.xs),
+                                            Text(
+                                              'Formats: JPG, PNG',
+                                              style: AppTextStyles.bodySmall
+                                                  .copyWith(
+                                                    color: Colors.grey[600],
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: AppSizes.xs),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.info_outline,
+                                              size: AppSizes.iconSm,
+                                              color: Colors.grey[600],
+                                            ),
+                                            const SizedBox(width: AppSizes.xs),
+                                            Text(
+                                              'Maximum size: 5MB',
+                                              style: AppTextStyles.bodySmall
+                                                  .copyWith(
+                                                    color: Colors.grey[600],
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: AppSizes.md),
+
+                        // Product Name
+                        CustomTextField(
+                          controller: _productNameController,
+                          label: 'Product Name *',
+                          hint:
+                              'Enter product name (e.g., Premium Basmati Rice)',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Product Name is required';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: AppSizes.md),
+
+                        // SKU Code
+                        CustomTextField(
+                          controller: _skuCodeController,
+                          label: 'SKU Code *',
+                          hint: 'Enter SKU (e.g., RICE001)',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'SKU Code is required';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: AppSizes.md),
+
+                        // Price and Opening Stock in a row
+                        Row(
+                          children: [
+                            Expanded(
+                              child: NumericTextField(
+                                controller: _priceController,
+                                label: 'Price (₹) *',
+                                hint: '0.00',
+                                allowDecimal: true,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Price is required';
+                                  }
+                                  if (double.tryParse(value) == null) {
+                                    return 'Invalid price';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: AppSizes.md),
+                            Expanded(
+                              child: NumericTextField(
+                                controller: _openingStockController,
+                                label: 'Opening Stock *',
+                                hint: '0',
+                                allowDecimal: false,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Opening Stock is required';
+                                  }
+                                  if (int.tryParse(value) == null) {
+                                    return 'Invalid stock quantity';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSizes.md),
+
+                        // Stock Date
+                        CustomTextField(
+                          controller: _stockDateController,
+                          label: 'Stock Date *',
+                          hint: 'YYYY-MM-DD',
+                          readOnly: true,
+                          onTap: () => _selectDate(context),
+                          suffixIcon: const Icon(Icons.calendar_today),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Stock Date is required';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: AppSizes.md),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(AppSizes.md),
+        decoration: BoxDecoration(
+          color: Theme.of(
+            context,
+          ).cardColor, // Use card color for footer background
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: const Offset(0, -3), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white, // White background for Cancel
+                foregroundColor: Theme.of(
+                  context,
+                ).colorScheme.onSurface, // Text color based on theme
+                side: BorderSide(color: Colors.grey[300]!), // Grey border
+              ),
+              child: const Text('Cancel'),
+            ),
+            const SizedBox(width: AppSizes.md),
+            ElevatedButton(
+              onPressed: _saveProduct,
+              child: const Text('Save Product'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -36,6 +36,9 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^6.3.0
   intl: ^0.20.2
+  image: ^4.2.0
+  flutter_riverpod: ^2.5.1
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +74,7 @@ flutter:
       - assets/images/idli_rice.jpg
       - assets/images/parboiled.jpg
       - assets/images/premium_basmati.jpg
+      - assets/images/logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

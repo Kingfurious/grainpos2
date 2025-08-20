@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'add_product_screen.dart';
-import 'add_variant_screen.dart';
-import 'variant_main.dart';
+import 'package:shopeasy/screens/add_variant_screen.dart';
 
 // Custom color class for the UI
 class AppColors {
@@ -12,65 +10,77 @@ class AppColors {
   static const Color borderColor = Color(0xFFE0E0E0);
   static const Color greenColor = Color(0xFF34A853);
   static const Color redColor = Color(0xFFEA4335);
+  static const Color orangeColor = Color(0xFFFF9800);
 }
 
-// Data model for the product information
-class ProductData {
+// Data model for the variant information
+class VariantData {
   final String image;
-  final String productName;
-  final String description;
-  final String skuCode;
-  final String price;
-  final String openingStock;
-  final String stockDate;
+  final String size;
+  final String hsnCode;
+  final String units;
+  final String taxRate;
+  final String dateAdded;
 
-  ProductData({
+  VariantData({
     required this.image,
-    required this.productName,
-    required this.description,
-    required this.skuCode,
-    required this.price,
-    required this.openingStock,
-    required this.stockDate,
+    required this.size,
+    required this.hsnCode,
+    required this.units,
+    required this.taxRate,
+    required this.dateAdded,
   });
 }
 
-class ManagementScreen extends StatefulWidget {
-  const ManagementScreen({super.key});
+class ProductVariantsScreen extends StatefulWidget {
+  const ProductVariantsScreen({super.key});
 
   @override
-  State<ManagementScreen> createState() => _ManagementScreenState();
+  State<ProductVariantsScreen> createState() => _ProductVariantsScreenState();
 }
 
-class _ManagementScreenState extends State<ManagementScreen> {
-  // Sample product data
-  final List<ProductData> _products = [
-    ProductData(
+class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
+  // Sample variant data
+  final List<VariantData> _variants = [
+    VariantData(
       image: '🌾',
-      productName: 'Premium Basmati Rice',
-      description: 'Long grain aromatic rice',
-      skuCode: 'RICE001',
-      price: '₹120/kg',
-      openingStock: '500 kg',
-      stockDate: '12/08/2025',
+      size: '5 kg',
+      hsnCode: '11042000',
+      units: '50 units',
+      taxRate: '5%',
+      dateAdded: '12/08/2025',
     ),
-    ProductData(
-      image: '🌾',
-      productName: 'Sona Masoori Rice',
-      description: 'Premium quality white rice',
-      skuCode: 'RICE002',
-      price: '₹85/kg',
-      openingStock: '750 kg',
-      stockDate: '12/08/2025',
+    VariantData(
+      image: '📦',
+      size: '10 kg',
+      hsnCode: '11042000',
+      units: '25 units',
+      taxRate: '5%',
+      dateAdded: '12/08/2025',
     ),
-    ProductData(
-      image: '🌾',
-      productName: 'Idli Rice Premium',
-      description: 'Fine grained rice for idli',
-      skuCode: 'RICE003',
-      price: '₹95/kg',
-      openingStock: '300 kg',
-      stockDate: '12/08/2025',
+    VariantData(
+      image: '📦',
+      size: '25 kg',
+      hsnCode: '11042000',
+      units: '15 units',
+      taxRate: '12%',
+      dateAdded: '12/08/2025',
+    ),
+    VariantData(
+      image: '📦',
+      size: '1 kg',
+      hsnCode: '11042000',
+      units: '100 units',
+      taxRate: '5%',
+      dateAdded: '12/08/2025',
+    ),
+    VariantData(
+      image: '📦',
+      size: '2 kg',
+      hsnCode: '11042000',
+      units: '75 units',
+      taxRate: '5%',
+      dateAdded: '12/08/2025',
     ),
   ];
 
@@ -86,7 +96,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
-          'Product Management',
+          'Product Variants',
           style: TextStyle(
             color: AppColors.textColor,
             fontSize: 20,
@@ -104,7 +114,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
             Row(
               children: [
                 Text(
-                  'Dashboard',
+                  'Products',
                   style: TextStyle(
                     color: AppColors.secondaryTextColor,
                     fontSize: 14,
@@ -112,14 +122,33 @@ class _ManagementScreenState extends State<ManagementScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Icon(
-                    Icons.chevron_right,
-                    size: 16,
-                    color: AppColors.secondaryTextColor,
+                  child: Text(
+                    '/',
+                    style: TextStyle(
+                      color: AppColors.secondaryTextColor,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
                 Text(
-                  'Products',
+                  'Premium Basmati Rice',
+                  style: TextStyle(
+                    color: AppColors.secondaryTextColor,
+                    fontSize: 14,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    '/',
+                    style: TextStyle(
+                      color: AppColors.secondaryTextColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                Text(
+                  'Variants',
                   style: TextStyle(
                     color: AppColors.textColor,
                     fontSize: 14,
@@ -134,31 +163,15 @@ class _ManagementScreenState extends State<ManagementScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Title and Count
+                // Title and Product Info
                 Row(
                   children: [
                     const Text(
-                      'Products',
+                      'Product Variants',
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textColor,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '12 products',
-                        style: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
                       ),
                     ),
                   ],
@@ -166,20 +179,14 @@ class _ManagementScreenState extends State<ManagementScreen> {
                 // Action Buttons
                 Row(
                   children: [
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const ProductVariantsScreen()),
-                        );
-                      },
-                      icon: const Icon(Icons.add, size: 16),
-                      label: const Text('Variants'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.greenColor,
-                        foregroundColor: Colors.white,
+                    OutlinedButton.icon(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.arrow_back, size: 16),
+                      label: const Text('Back to Product'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.textColor,
+                        side: BorderSide(color: AppColors.borderColor),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        elevation: 0,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -187,11 +194,11 @@ class _ManagementScreenState extends State<ManagementScreen> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const AddProductScreen()),
+                          MaterialPageRoute(builder: (context) => const AddVariantScreen()),
                         );
                       },
                       icon: const Icon(Icons.add, size: 16),
-                      label: const Text('Add Product'),
+                      label: const Text('Add Variant'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
                         foregroundColor: Colors.white,
@@ -205,13 +212,34 @@ class _ManagementScreenState extends State<ManagementScreen> {
             ),
             const SizedBox(height: 8),
 
-            // Subtitle
-            Text(
-              'Manage your product inventory',
-              style: TextStyle(
-                color: AppColors.secondaryTextColor,
-                fontSize: 16,
-              ),
+            // Product Info
+            Row(
+              children: [
+                Text(
+                  'Premium Basmati Rice',
+                  style: TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '5 variants',
+                    style: TextStyle(
+                      color: AppColors.primaryColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 32),
 
@@ -249,7 +277,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                               ),
                               child: TextField(
                                 decoration: InputDecoration(
-                                  hintText: 'Search products...',
+                                  hintText: 'Search variants...',
                                   hintStyle: TextStyle(color: AppColors.secondaryTextColor),
                                   prefixIcon: Icon(
                                     Icons.search,
@@ -263,7 +291,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                           ),
                           const SizedBox(width: 16),
 
-                          // Category Filter
+                          // Size Filter
                           Container(
                             height: 48,
                             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -274,13 +302,14 @@ class _ManagementScreenState extends State<ManagementScreen> {
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
-                                value: 'All Categories',
+                                value: 'All Sizes',
                                 icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.secondaryTextColor),
                                 style: TextStyle(color: AppColors.secondaryTextColor, fontSize: 14),
                                 items: const [
-                                  DropdownMenuItem(value: 'All Categories', child: Text('All Categories')),
-                                  DropdownMenuItem(value: 'Rice', child: Text('Rice')),
-                                  DropdownMenuItem(value: 'Grains', child: Text('Grains')),
+                                  DropdownMenuItem(value: 'All Sizes', child: Text('All Sizes')),
+                                  DropdownMenuItem(value: '1 kg', child: Text('1 kg')),
+                                  DropdownMenuItem(value: '2 kg', child: Text('2 kg')),
+                                  DropdownMenuItem(value: '5 kg', child: Text('5 kg')),
                                 ],
                                 onChanged: (value) {},
                               ),
@@ -299,13 +328,14 @@ class _ManagementScreenState extends State<ManagementScreen> {
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
-                                value: 'Sort by Name',
+                                value: 'Sort by',
                                 icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.secondaryTextColor),
                                 style: TextStyle(color: AppColors.secondaryTextColor, fontSize: 14),
                                 items: const [
-                                  DropdownMenuItem(value: 'Sort by Name', child: Text('Sort by Name')),
-                                  DropdownMenuItem(value: 'Sort by Price', child: Text('Sort by Price')),
-                                  DropdownMenuItem(value: 'Sort by Stock', child: Text('Sort by Stock')),
+                                  DropdownMenuItem(value: 'Sort by', child: Text('Sort by')),
+                                  DropdownMenuItem(value: 'Size', child: Text('Size')),
+                                  DropdownMenuItem(value: 'Units', child: Text('Units')),
+                                  DropdownMenuItem(value: 'Date', child: Text('Date')),
                                 ],
                                 onChanged: (value) {},
                               ),
@@ -331,7 +361,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Icon(
-                                    Icons.grid_view,
+                                    Icons.view_list,
                                     color: AppColors.primaryColor,
                                     size: 20,
                                   ),
@@ -344,7 +374,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Icon(
-                                    Icons.view_list,
+                                    Icons.grid_view,
                                     color: AppColors.secondaryTextColor,
                                     size: 20,
                                   ),
@@ -382,11 +412,11 @@ class _ManagementScreenState extends State<ManagementScreen> {
                                   ),
                                 ),
                                 _buildTableHeader('Image', flex: 1, centered: true),
-                                _buildTableHeader('Product Name', flex: 3),
-                                _buildTableHeader('SKU Code', flex: 2, centered: true),
-                                _buildTableHeader('Price', flex: 2, centered: true),
-                                _buildTableHeader('Opening Stock', flex: 2, centered: true),
-                                _buildTableHeader('Stock Date', flex: 2, centered: true),
+                                _buildTableHeader('Size', flex: 2, centered: true),
+                                _buildTableHeader('HSN Code', flex: 2, centered: true),
+                                _buildTableHeader('Units', flex: 2, centered: true),
+                                _buildTableHeader('Tax Rate', flex: 2, centered: true),
+                                _buildTableHeader('Date Added', flex: 2, centered: true),
                                 _buildTableHeader('Actions', flex: 3, centered: true),
                               ],
                             ),
@@ -395,10 +425,10 @@ class _ManagementScreenState extends State<ManagementScreen> {
                           // Table Rows
                           Expanded(
                             child: ListView.builder(
-                              itemCount: _products.length,
+                              itemCount: _variants.length,
                               itemBuilder: (context, index) {
-                                final product = _products[index];
-                                return _buildTableRow(product, index);
+                                final variant = _variants[index];
+                                return _buildTableRow(variant, index);
                               },
                             ),
                           ),
@@ -406,7 +436,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                       ),
                     ),
 
-                    // Footer with Stock Value
+                    // Footer with Totals
                     Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
@@ -418,7 +448,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Showing 1-12 of 12 products',
+                            'Showing 1-5 of 5 variants',
                             style: TextStyle(
                               color: AppColors.secondaryTextColor,
                               fontSize: 14,
@@ -427,20 +457,28 @@ class _ManagementScreenState extends State<ManagementScreen> {
                           Row(
                             children: [
                               Text(
-                                'Total Stock Value:',
+                                'Total Variants: 5',
                                 style: TextStyle(
                                   color: AppColors.textColor,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 16),
                               Text(
-                                '₹2,45,000',
+                                '|',
+                                style: TextStyle(
+                                  color: AppColors.secondaryTextColor,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Text(
+                                'Total Stock: 265 units',
                                 style: TextStyle(
                                   color: AppColors.textColor,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],
@@ -473,7 +511,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
     );
   }
 
-  Widget _buildTableRow(ProductData product, int index) {
+  Widget _buildTableRow(VariantData variant, int index) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
@@ -506,7 +544,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                 ),
                 child: Center(
                   child: Text(
-                    product.image,
+                    variant.image,
                     style: const TextStyle(fontSize: 24),
                   ),
                 ),
@@ -514,67 +552,12 @@ class _ManagementScreenState extends State<ManagementScreen> {
             ),
           ),
 
-          // Product Name & Description
-          Expanded(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.productName,
-                  style: const TextStyle(
-                    color: AppColors.textColor,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  product.description,
-                  style: TextStyle(
-                    color: AppColors.secondaryTextColor,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // SKU Code
+          // Size
           Expanded(
             flex: 2,
             child: Center(
               child: Text(
-                product.skuCode,
-                style: const TextStyle(
-                  color: AppColors.textColor,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ),
-
-          // Price
-          Expanded(
-            flex: 2,
-            child: Center(
-              child: Text(
-                product.price,
-                style: TextStyle(
-                  color: AppColors.greenColor,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-
-          // Opening Stock
-          Expanded(
-            flex: 2,
-            child: Center(
-              child: Text(
-                product.openingStock,
+                variant.size,
                 style: const TextStyle(
                   color: AppColors.textColor,
                   fontSize: 14,
@@ -584,12 +567,67 @@ class _ManagementScreenState extends State<ManagementScreen> {
             ),
           ),
 
-          // Stock Date
+          // HSN Code
           Expanded(
             flex: 2,
             child: Center(
               child: Text(
-                product.stockDate,
+                variant.hsnCode,
+                style: const TextStyle(
+                  color: AppColors.textColor,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+
+          // Units
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                variant.units,
+                style: const TextStyle(
+                  color: AppColors.textColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+
+          // Tax Rate
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: variant.taxRate == '5%'
+                      ? AppColors.greenColor.withOpacity(0.1)
+                      : AppColors.orangeColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  variant.taxRate,
+                  style: TextStyle(
+                    color: variant.taxRate == '5%'
+                        ? AppColors.greenColor
+                        : AppColors.orangeColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Date Added
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                variant.dateAdded,
                 style: TextStyle(
                   color: AppColors.secondaryTextColor,
                   fontSize: 14,
@@ -606,9 +644,7 @@ class _ManagementScreenState extends State<ManagementScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildActionButton('Edit', AppColors.primaryColor, outlined: true),
-                  const SizedBox(width: 8),
-                  _buildActionButton('Variants', AppColors.greenColor, outlined: true),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 12),
                   _buildActionButton('Delete', AppColors.redColor, outlined: false),
                 ],
               ),
@@ -621,8 +657,8 @@ class _ManagementScreenState extends State<ManagementScreen> {
 
   Widget _buildActionButton(String text, Color color, {required bool outlined}) {
     return SizedBox(
-      height: 32,
-      width: text == 'Variants' ? 80 : 60,
+      height: 36,
+      width: 70,
       child: outlined
           ? OutlinedButton(
         onPressed: () {},
@@ -630,11 +666,11 @@ class _ManagementScreenState extends State<ManagementScreen> {
           foregroundColor: color,
           side: BorderSide(color: color),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: const EdgeInsets.symmetric(horizontal: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
         ),
         child: Text(
           text,
-          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
       )
           : ElevatedButton(
@@ -643,12 +679,12 @@ class _ManagementScreenState extends State<ManagementScreen> {
           backgroundColor: color,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: const EdgeInsets.symmetric(horizontal: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           elevation: 0,
         ),
         child: Text(
           text,
-          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
       ),
     );

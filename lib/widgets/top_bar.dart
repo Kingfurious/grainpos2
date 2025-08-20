@@ -54,12 +54,27 @@ class TopBar extends StatelessWidget {
               children: [
                 _buildTopButton(context, Icons.delivery_dining, 'Delivery'),
                 // The 'Bills' button now navigates to the billing screen.
-                _buildTopButton(context, Icons.receipt_long, 'Bills', onTap: navigateToBillingScreen),
+                _buildTopButton(
+                  context,
+                  Icons.receipt_long,
+                  'Bills',
+                  onTap: navigateToBillingScreen,
+                ),
                 _buildTopButton(context, Icons.book, 'Daybook'),
                 _buildTopButton(context, Icons.pause_circle_outline, 'Hold'),
-                _buildTopButton(context, Icons.add_circle_outline, 'Product', onTap: navigateToManagementScreen),
+                _buildTopButton(
+                  context,
+                  Icons.add_circle_outline,
+                  'Product',
+                  onTap: navigateToManagementScreen,
+                ),
                 _buildTopButton(context, Icons.people_outline, 'Customer'),
-                _buildTopButton(context, Icons.inventory_2_outlined, 'Stock', onTap: navigateToManagementScreen),
+                _buildTopButton(
+                  context,
+                  Icons.inventory_2_outlined,
+                  'Stock',
+                  onTap: navigateToManagementScreen,
+                ),
               ],
             ),
           ),
@@ -69,7 +84,12 @@ class TopBar extends StatelessWidget {
   }
 
   // The button widget is now wrapped in an InkWell to make it tappable.
-  Widget _buildTopButton(BuildContext context, IconData icon, String label, {VoidCallback? onTap}) {
+  Widget _buildTopButton(
+    BuildContext context,
+    IconData icon,
+    String label, {
+    VoidCallback? onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -77,7 +97,7 @@ class TopBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
         child: Column(
           children: [
-            Icon(icon, color: Colors.black54, size: 24),
+            Icon(icon, color: Color.fromARGB(255, 26, 111, 214), size: 24),
             const SizedBox(height: 4),
             Text(label, style: const TextStyle(fontSize: 12)),
           ],
