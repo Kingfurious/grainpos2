@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary
-  static const Color primary = Color(0xFF4285F4); // Google Blue
-  static const Color onPrimary = Colors.white;
+  static const Color primary = Colors.white; // Changed from 0xFF4285F4 to white
+  static const Color onPrimary =
+      Colors.black; // Changed from Colors.white to black for contrast
 
   // Secondary
   static const Color secondary = Color(0xFF34A853); // Google Green
@@ -26,8 +27,8 @@ class AppColors {
   static const Color onBackground = Colors.black;
 
   // Text Colors
-  static const Color textPrimary = Colors.black;
-  static const Color textSecondary = Colors.grey;
+  static const Color textPrimary = Color(0xFF202124);
+  static const Color textSecondary = Color(0xFF5F6368);
   static const Color textTertiary = Colors.grey;
 
   // Border Colors
@@ -38,5 +39,17 @@ class AppColors {
   static const Color success = Color(0xFF34A853);
   static const Color warning = Color(0xFFFBBC05);
   static const Color info = Color(0xFF4285F4);
-}
 
+  static const Color paidGreen = Color(0xFF34A853);
+  static const Color paidGreenBackground = Color(0xFFE6F4EA);
+  static const Color pendingOrange = Color(0xFFFBBC04);
+  static const Color pendingOrangeBackground = Color(0xFFFFF8E1);
+  static const Color failedRed = Color(0xFFEA4335);
+  static const Color failedRedBackground = Color(0xFFFFEBEE);
+  static const Color deliveredGreen = Color(0xFF34A853);
+  static const Color deliveredGreenBackground = Color(0xFFE6F4EA);
+  static const Color shippedBlue = Color(0xFF4285F4);
+  static const Color shippedBlueBackground = Color(0xFFE3F2FD);
+  static const Color cancelledRed = Color(0xFFEA4335);
+  static const Color cancelledRedBackground = Color(0xFFFFEBEE);
+}

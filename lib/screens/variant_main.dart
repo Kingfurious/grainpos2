@@ -1,17 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shopeasy/screens/add_variant_screen.dart';
-
-// Custom color class for the UI
-class AppColors {
-  static const Color primaryColor = Color(0xFF0D63F3);
-  static const Color scaffoldBackground = Color(0xFFF8F9FA);
-  static const Color textColor = Color(0xFF202124);
-  static const Color secondaryTextColor = Color(0xFF5F6368);
-  static const Color borderColor = Color(0xFFE0E0E0);
-  static const Color greenColor = Color(0xFF34A853);
-  static const Color redColor = Color(0xFFEA4335);
-  static const Color orangeColor = Color(0xFFFF9800);
-}
+import 'package:shopeasy/core/constants/app_colors.dart';
 
 // Data model for the variant information
 class VariantData {
@@ -84,29 +73,36 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
     ),
   ];
 
+  final Set<int> _selectedRows = <int>{};
+
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textColor),
+          icon: Icon(
+            Icons.arrow_back,
+            color: AppColors.textPrimary,
+            size: isMobile ? 20 : 24,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
+        title: Text(
           'Product Variants',
           style: TextStyle(
-            color: AppColors.textColor,
-            fontSize: 20,
+            color: AppColors.textPrimary,
+            fontSize: isMobile ? 18 : 20,
             fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: false,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.all(isMobile ? 16.0 : 24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -116,48 +112,52 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
                 Text(
                   'Products',
                   style: TextStyle(
-                    color: AppColors.secondaryTextColor,
-                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                    fontSize: isMobile ? 12 : 14,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 4.0 : 8.0,
+                  ),
                   child: Text(
                     '/',
                     style: TextStyle(
-                      color: AppColors.secondaryTextColor,
-                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                      fontSize: isMobile ? 12 : 14,
                     ),
                   ),
                 ),
                 Text(
                   'Premium Basmati Rice',
                   style: TextStyle(
-                    color: AppColors.secondaryTextColor,
-                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                    fontSize: isMobile ? 12 : 14,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 4.0 : 8.0,
+                  ),
                   child: Text(
                     '/',
                     style: TextStyle(
-                      color: AppColors.secondaryTextColor,
-                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                      fontSize: isMobile ? 12 : 14,
                     ),
                   ),
                 ),
                 Text(
                   'Variants',
                   style: TextStyle(
-                    color: AppColors.textColor,
-                    fontSize: 14,
+                    color: AppColors.textPrimary,
+                    fontSize: isMobile ? 12 : 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: isMobile ? 16 : 24),
 
             // Header Section
             Row(
@@ -166,51 +166,110 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
                 // Title and Product Info
                 Row(
                   children: [
-                    const Text(
+                    Text(
                       'Product Variants',
                       style: TextStyle(
-                        fontSize: 32,
+                        fontSize: isMobile ? 24 : 32,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textColor,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                   ],
                 ),
                 // Action Buttons
-                Row(
+                if (!isMobile)
+                  Row(
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.arrow_back, size: 16),
+                        label: const Text('Back to Product'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.textPrimary,
+                          side: BorderSide(color: AppColors.borderPrimary),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AddVariantScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.add, size: 16),
+                        label: const Text('Add Variant'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.info,
+                          foregroundColor: AppColors.onPrimary,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          elevation: 0,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+            if (isMobile)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     OutlinedButton.icon(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back, size: 16),
-                      label: const Text('Back to Product'),
+                      icon: const Icon(Icons.arrow_back, size: 14),
+                      label: const Text(
+                        'Back to Product',
+                        style: TextStyle(fontSize: 12),
+                      ),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textColor,
-                        side: BorderSide(color: AppColors.borderColor),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        foregroundColor: AppColors.textPrimary,
+                        side: BorderSide(color: AppColors.borderPrimary),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 12),
                     ElevatedButton.icon(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const AddVariantScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => const AddVariantScreen(),
+                          ),
                         );
                       },
-                      icon: const Icon(Icons.add, size: 16),
-                      label: const Text('Add Variant'),
+                      icon: const Icon(Icons.add, size: 14),
+                      label: const Text(
+                        'Add Variant',
+                        style: TextStyle(fontSize: 12),
+                      ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        backgroundColor: AppColors.info,
+                        foregroundColor: AppColors.onPrimary,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         elevation: 0,
                       ),
                     ),
                   ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 8),
+              ),
+            SizedBox(height: isMobile ? 8 : 8),
 
             // Product Info
             Row(
@@ -218,38 +277,41 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
                 Text(
                   'Premium Basmati Rice',
                   style: TextStyle(
-                    color: AppColors.textColor,
-                    fontSize: 18,
+                    color: AppColors.textPrimary,
+                    fontSize: isMobile ? 16 : 18,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: isMobile ? 8 : 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 8 : 12,
+                    vertical: isMobile ? 4 : 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryColor.withOpacity(0.1),
+                    color: AppColors.info.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     '5 variants',
                     style: TextStyle(
-                      color: AppColors.primaryColor,
-                      fontSize: 14,
+                      color: AppColors.info,
+                      fontSize: isMobile ? 12 : 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: isMobile ? 16 : 32),
 
             // Content Container
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.surface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.borderColor),
+                  border: Border.all(color: AppColors.borderPrimary),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
@@ -262,261 +324,645 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
                   children: [
                     // Search and Filter Section
                     Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Row(
-                        children: [
-                          // Search Bar
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: AppColors.borderColor),
-                              ),
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'Search variants...',
-                                  hintStyle: TextStyle(color: AppColors.secondaryTextColor),
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color: AppColors.secondaryTextColor,
-                                  ),
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-
-                          // Size Filter
-                          Container(
-                            height: 48,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: AppColors.borderColor),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: 'All Sizes',
-                                icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.secondaryTextColor),
-                                style: TextStyle(color: AppColors.secondaryTextColor, fontSize: 14),
-                                items: const [
-                                  DropdownMenuItem(value: 'All Sizes', child: Text('All Sizes')),
-                                  DropdownMenuItem(value: '1 kg', child: Text('1 kg')),
-                                  DropdownMenuItem(value: '2 kg', child: Text('2 kg')),
-                                  DropdownMenuItem(value: '5 kg', child: Text('5 kg')),
-                                ],
-                                onChanged: (value) {},
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-
-                          // Sort Filter
-                          Container(
-                            height: 48,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: AppColors.borderColor),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: 'Sort by',
-                                icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.secondaryTextColor),
-                                style: TextStyle(color: AppColors.secondaryTextColor, fontSize: 14),
-                                items: const [
-                                  DropdownMenuItem(value: 'Sort by', child: Text('Sort by')),
-                                  DropdownMenuItem(value: 'Size', child: Text('Size')),
-                                  DropdownMenuItem(value: 'Units', child: Text('Units')),
-                                  DropdownMenuItem(value: 'Date', child: Text('Date')),
-                                ],
-                                onChanged: (value) {},
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-
-                          // View Toggle
-                          Container(
-                            height: 48,
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[100],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
+                      padding: EdgeInsets.all(isMobile ? 16.0 : 24.0),
+                      child: isMobile
+                          ? Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
                               children: [
                                 Container(
-                                  width: 40,
                                   height: 40,
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(6),
+                                    color: AppColors.surface,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: AppColors.borderPrimary,
+                                    ),
                                   ),
-                                  child: Icon(
-                                    Icons.view_list,
-                                    color: AppColors.primaryColor,
-                                    size: 20,
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'Search variants...',
+                                      hintStyle: TextStyle(
+                                        color: AppColors.textSecondary,
+                                      ),
+                                      prefixIcon: Icon(
+                                        Icons.search,
+                                        color: AppColors.textSecondary,
+                                        size: 20,
+                                      ),
+                                      border: InputBorder.none,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 10,
+                                          ),
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(width: 4),
                                 Container(
-                                  width: 40,
                                   height: 40,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
                                   ),
-                                  child: Icon(
-                                    Icons.grid_view,
-                                    color: AppColors.secondaryTextColor,
-                                    size: 20,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.surface,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: AppColors.borderPrimary,
+                                    ),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: 'All Sizes',
+                                      icon: Icon(
+                                        Icons.keyboard_arrow_down,
+                                        color: AppColors.textSecondary,
+                                        size: 20,
+                                      ),
+                                      style: TextStyle(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 12,
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: 'All Sizes',
+                                          child: Text('All Sizes'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '1 kg',
+                                          child: Text('1 kg'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '2 kg',
+                                          child: Text('2 kg'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '5 kg',
+                                          child: Text('5 kg'),
+                                        ),
+                                      ],
+                                      onChanged: (value) {},
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  height: 40,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.surface,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: AppColors.borderPrimary,
+                                    ),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: 'Sort by',
+                                      icon: Icon(
+                                        Icons.keyboard_arrow_down,
+                                        color: AppColors.textSecondary,
+                                        size: 20,
+                                      ),
+                                      style: TextStyle(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 12,
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: 'Sort by',
+                                          child: Text('Sort by'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Size',
+                                          child: Text('Size'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Units',
+                                          child: Text('Units'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Date',
+                                          child: Text('Date'),
+                                        ),
+                                      ],
+                                      onChanged: (value) {},
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  height: 40,
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.background,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.surface,
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.view_list,
+                                          color: AppColors.info,
+                                          size: 16,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.grid_view,
+                                          color: AppColors.textSecondary,
+                                          size: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                // Search Bar
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.surface,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: AppColors.borderPrimary,
+                                      ),
+                                    ),
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                        hintText: 'Search variants...',
+                                        hintStyle: TextStyle(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                        prefixIcon: Icon(
+                                          Icons.search,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                        border: InputBorder.none,
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 12,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+
+                                // Size Filter
+                                Container(
+                                  height: 48,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.surface,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: AppColors.borderPrimary,
+                                    ),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: 'All Sizes',
+                                      icon: const Icon(
+                                        Icons.keyboard_arrow_down,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                      style: TextStyle(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 14,
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: 'All Sizes',
+                                          child: Text('All Sizes'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '1 kg',
+                                          child: Text('1 kg'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '2 kg',
+                                          child: Text('2 kg'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: '5 kg',
+                                          child: Text('5 kg'),
+                                        ),
+                                      ],
+                                      onChanged: (value) {},
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+
+                                // Sort Filter
+                                Container(
+                                  height: 48,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.surface,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: AppColors.borderPrimary,
+                                    ),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: 'Sort by',
+                                      icon: const Icon(
+                                        Icons.keyboard_arrow_down,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                      style: TextStyle(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 14,
+                                      ),
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: 'Sort by',
+                                          child: Text('Sort by'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Size',
+                                          child: Text('Size'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Units',
+                                          child: Text('Units'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Date',
+                                          child: Text('Date'),
+                                        ),
+                                      ],
+                                      onChanged: (value) {},
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+
+                                // View Toggle
+                                Container(
+                                  height: 48,
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.background,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.surface,
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.view_list,
+                                          color: AppColors.info,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.grid_view,
+                                          color: AppColors.textSecondary,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
                     ),
 
                     // Data Table
                     Expanded(
-                      child: Column(
-                        children: [
-                          // Table Header
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[50],
-                              border: Border(
-                                top: BorderSide(color: AppColors.borderColor),
-                                bottom: BorderSide(color: AppColors.borderColor),
-                              ),
-                            ),
-                            child: Row(
+                      child: isMobile
+                          ? _buildMobileVariantList(isMobile)
+                          : Column(
                               children: [
-                                // Checkbox
-                                SizedBox(
-                                  width: 40,
-                                  child: Checkbox(
-                                    value: false,
-                                    onChanged: (value) {},
-                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                // Table Header
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 16,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.background,
+                                    border: Border(
+                                      top: BorderSide(
+                                        color: AppColors.borderPrimary,
+                                      ),
+                                      bottom: BorderSide(
+                                        color: AppColors.borderPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      // Checkbox
+                                      SizedBox(
+                                        width: 40,
+                                        child: Checkbox(
+                                          value:
+                                              _selectedRows.length ==
+                                              _variants.length,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              if (value == true) {
+                                                _selectedRows.addAll(
+                                                  List<int>.generate(
+                                                    _variants.length,
+                                                    (i) => i,
+                                                  ),
+                                                );
+                                              } else {
+                                                _selectedRows.clear();
+                                              }
+                                            });
+                                          },
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                        ),
+                                      ),
+                                      _buildTableHeader(
+                                        'Image',
+                                        flex: 1,
+                                        centered: true,
+                                        isMobile: isMobile,
+                                      ),
+                                      _buildTableHeader(
+                                        'Size',
+                                        flex: 2,
+                                        centered: true,
+                                        isMobile: isMobile,
+                                      ),
+                                      _buildTableHeader(
+                                        'HSN Code',
+                                        flex: 2,
+                                        centered: true,
+                                        isMobile: isMobile,
+                                      ),
+                                      _buildTableHeader(
+                                        'Units',
+                                        flex: 2,
+                                        centered: true,
+                                        isMobile: isMobile,
+                                      ),
+                                      _buildTableHeader(
+                                        'Tax Rate',
+                                        flex: 2,
+                                        centered: true,
+                                        isMobile: isMobile,
+                                      ),
+                                      _buildTableHeader(
+                                        'Date Added',
+                                        flex: 2,
+                                        centered: true,
+                                        isMobile: isMobile,
+                                      ),
+                                      _buildTableHeader(
+                                        'Actions',
+                                        flex: 3,
+                                        centered: true,
+                                        isMobile: isMobile,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                _buildTableHeader('Image', flex: 1, centered: true),
-                                _buildTableHeader('Size', flex: 2, centered: true),
-                                _buildTableHeader('HSN Code', flex: 2, centered: true),
-                                _buildTableHeader('Units', flex: 2, centered: true),
-                                _buildTableHeader('Tax Rate', flex: 2, centered: true),
-                                _buildTableHeader('Date Added', flex: 2, centered: true),
-                                _buildTableHeader('Actions', flex: 3, centered: true),
+
+                                // Table Rows
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: _variants.length,
+                                    itemBuilder: (context, index) {
+                                      final variant = _variants[index];
+                                      return _buildTableRow(
+                                        variant,
+                                        index,
+                                        isMobile,
+                                      );
+                                    },
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
-
-                          // Table Rows
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: _variants.length,
-                              itemBuilder: (context, index) {
-                                final variant = _variants[index];
-                                return _buildTableRow(variant, index);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
 
                     // Footer with Totals
                     Container(
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(
+                        isMobile ? 12 : 24,
+                      ), // Reduced padding to prevent overflow
                       decoration: BoxDecoration(
                         border: Border(
-                          top: BorderSide(color: AppColors.borderColor),
+                          top: BorderSide(color: AppColors.borderPrimary),
                         ),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Showing 1-5 of 5 variants',
-                            style: TextStyle(
-                              color: AppColors.secondaryTextColor,
-                              fontSize: 14,
+                      child: isMobile
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Showing 1-5 of 5 variants',
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 8,
+                                ), // Add space between stacked elements
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 4,
+                                  children: [
+                                    Text(
+                                      'Total Variants: 5',
+                                      style: TextStyle(
+                                        color: AppColors.textPrimary,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Total Stock: 265 units',
+                                      style: TextStyle(
+                                        color: AppColors.textPrimary,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Showing 1-5 of 5 variants',
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Wrap(
+                                  spacing: 16,
+                                  runSpacing: 4,
+                                  children: [
+                                    Text(
+                                      'Total Variants: 5',
+                                      style: TextStyle(
+                                        color: AppColors.textPrimary,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      '|',
+                                      style: TextStyle(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Total Stock: 265 units',
+                                      style: TextStyle(
+                                        color: AppColors.textPrimary,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'Total Variants: 5',
-                                style: TextStyle(
-                                  color: AppColors.textColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Text(
-                                '|',
-                                style: TextStyle(
-                                  color: AppColors.secondaryTextColor,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Text(
-                                'Total Stock: 265 units',
-                                style: TextStyle(
-                                  color: AppColors.textColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
                     ),
                   ],
                 ),
               ),
             ),
+            if (_selectedRows.isNotEmpty) ...[
+              SizedBox(height: isMobile ? 8 : 16),
+              Container(
+                padding: EdgeInsets.all(isMobile ? 8.0 : 16.0),
+                decoration: BoxDecoration(
+                  color: AppColors.info.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppColors.info.withOpacity(0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      '${_selectedRows.length} items selected',
+                      style: TextStyle(
+                        color: AppColors.info,
+                        fontSize: isMobile ? 12 : 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const Spacer(),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() => _selectedRows.clear());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.error,
+                        foregroundColor: AppColors.onPrimary,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 8 : 12,
+                          vertical: isMobile ? 4 : 8,
+                        ),
+                      ),
+                      icon: Icon(Icons.delete, size: isMobile ? 14 : 16),
+                      label: Text(
+                        'Delete Selected',
+                        style: TextStyle(fontSize: isMobile ? 12 : 14),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTableHeader(String text, {int flex = 1, bool centered = false}) {
+  Widget _buildTableHeader(
+    String text, {
+    int flex = 1,
+    bool centered = false,
+    required bool isMobile,
+  }) {
     return Expanded(
       flex: flex,
       child: Text(
         text,
         textAlign: centered ? TextAlign.center : TextAlign.left,
-        style: const TextStyle(
+        style: TextStyle(
           fontWeight: FontWeight.w600,
-          color: AppColors.textColor,
-          fontSize: 14,
+          color: AppColors.textPrimary,
+          fontSize: isMobile ? 12 : 14,
         ),
       ),
     );
   }
 
-  Widget _buildTableRow(VariantData variant, int index) {
+  Widget _buildTableRow(VariantData variant, int index, bool isMobile) {
+    final bool isSelected = _selectedRows.contains(index);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 24,
+        vertical: isMobile ? 12 : 16,
+      ),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: AppColors.borderColor.withOpacity(0.5)),
+          bottom: BorderSide(color: AppColors.borderPrimary.withOpacity(0.5)),
         ),
       ),
       child: Row(
@@ -525,8 +971,16 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
           SizedBox(
             width: 40,
             child: Checkbox(
-              value: false,
-              onChanged: (value) {},
+              value: isSelected,
+              onChanged: (value) {
+                setState(() {
+                  if (value == true) {
+                    _selectedRows.add(index);
+                  } else {
+                    _selectedRows.remove(index);
+                  }
+                });
+              },
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
           ),
@@ -536,16 +990,16 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
             flex: 1,
             child: Center(
               child: Container(
-                width: 50,
-                height: 50,
+                width: isMobile ? 40 : 50,
+                height: isMobile ? 40 : 50,
                 decoration: BoxDecoration(
-                  color: Colors.brown[100],
+                  color: AppColors.surface,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
                   child: Text(
                     variant.image,
-                    style: const TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: isMobile ? 20 : 24),
                   ),
                 ),
               ),
@@ -558,9 +1012,9 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
             child: Center(
               child: Text(
                 variant.size,
-                style: const TextStyle(
-                  color: AppColors.textColor,
-                  fontSize: 14,
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: isMobile ? 12 : 14,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -573,9 +1027,9 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
             child: Center(
               child: Text(
                 variant.hsnCode,
-                style: const TextStyle(
-                  color: AppColors.textColor,
-                  fontSize: 14,
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: isMobile ? 12 : 14,
                 ),
               ),
             ),
@@ -587,9 +1041,9 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
             child: Center(
               child: Text(
                 variant.units,
-                style: const TextStyle(
-                  color: AppColors.textColor,
-                  fontSize: 14,
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: isMobile ? 12 : 14,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -604,17 +1058,17 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: variant.taxRate == '5%'
-                      ? AppColors.greenColor.withOpacity(0.1)
-                      : AppColors.orangeColor.withOpacity(0.1),
+                      ? AppColors.secondary.withOpacity(0.1)
+                      : AppColors.warning.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   variant.taxRate,
                   style: TextStyle(
                     color: variant.taxRate == '5%'
-                        ? AppColors.greenColor
-                        : AppColors.orangeColor,
-                    fontSize: 12,
+                        ? AppColors.secondary
+                        : AppColors.warning,
+                    fontSize: isMobile ? 10 : 12,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -629,8 +1083,8 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
               child: Text(
                 variant.dateAdded,
                 style: TextStyle(
-                  color: AppColors.secondaryTextColor,
-                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                  fontSize: isMobile ? 12 : 14,
                 ),
               ),
             ),
@@ -643,9 +1097,19 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildActionButton('Edit', AppColors.primaryColor, outlined: true),
-                  const SizedBox(width: 12),
-                  _buildActionButton('Delete', AppColors.redColor, outlined: false),
+                  _buildActionButton(
+                    'Edit',
+                    AppColors.info,
+                    outlined: true,
+                    isMobile: isMobile,
+                  ),
+                  SizedBox(width: isMobile ? 4 : 12),
+                  _buildActionButton(
+                    'Delete',
+                    AppColors.error,
+                    outlined: false,
+                    isMobile: isMobile,
+                  ),
                 ],
               ),
             ),
@@ -655,38 +1119,178 @@ class _ProductVariantsScreenState extends State<ProductVariantsScreen> {
     );
   }
 
-  Widget _buildActionButton(String text, Color color, {required bool outlined}) {
-    return SizedBox(
-      height: 36,
-      width: 70,
-      child: outlined
-          ? OutlinedButton(
-        onPressed: () {},
-        style: OutlinedButton.styleFrom(
-          foregroundColor: color,
-          side: BorderSide(color: color),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-        ),
-      )
-          : ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          elevation: 0,
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+  Widget _buildMobileVariantList(bool isMobile) {
+    return ListView.builder(
+      itemCount: _variants.length,
+      itemBuilder: (context, index) {
+        final variant = _variants[index];
+        final bool isSelected = _selectedRows.contains(index);
+        return Card(
+          color: AppColors.surface, // Changed from default to ensure white background
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Checkbox(
+                      value: isSelected,
+                      onChanged: (value) {
+                        setState(() {
+                          if (value == true) {
+                            _selectedRows.add(index);
+                          } else {
+                            _selectedRows.remove(index);
+                          }
+                        });
+                      },
+                    ),
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.surface, // Changed from Colors.brown[100] to white
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Center(
+                        child: Text(
+                          variant.image,
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            variant.size,
+                            style: TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            variant.hsnCode,
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildInfoChip(label: variant.units, isMobile: true, backgroundColor: AppColors.background, textColor: AppColors.textPrimary),
+                    _buildInfoChip(
+                      label: variant.taxRate,
+                      textColor: variant.taxRate == '5%'
+                          ? AppColors.secondary
+                          : AppColors.warning,
+                      backgroundColor: variant.taxRate == '5%'
+                          ? AppColors.secondary.withOpacity(0.1)
+                          : AppColors.warning.withOpacity(0.1),
+                      isMobile: true,
+                    ),
+                    _buildInfoChip(label: variant.dateAdded, isMobile: true, backgroundColor: AppColors.background, textColor: AppColors.textPrimary),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _buildActionButton(
+                      'Edit',
+                      AppColors.info,
+                      outlined: true,
+                      isMobile: isMobile,
+                    ),
+                    const SizedBox(width: 8),
+                    _buildActionButton(
+                      'Delete',
+                      AppColors.error,
+                      outlined: false,
+                      isMobile: isMobile,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoChip({
+    required String label,
+    Color? textColor,
+    Color? backgroundColor,
+    required bool isMobile,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 8 : 12,
+        vertical: isMobile ? 4 : 6,
+      ),
+      decoration: BoxDecoration(
+        color: backgroundColor ?? AppColors.borderPrimary.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: textColor ?? AppColors.textSecondary,
+          fontSize: isMobile ? 10 : 12,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
+  }
+
+  Widget _buildActionButton(
+    String text,
+    Color color, {
+    required bool outlined,
+    required bool isMobile,
+  }) {
+    return outlined
+        ? OutlinedButton(
+            onPressed: () {},
+            style: OutlinedButton.styleFrom(
+              foregroundColor: color,
+              side: BorderSide(color: color),
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 8 : 12,
+                vertical: isMobile ? 4 : 8,
+              ),
+              textStyle: TextStyle(fontSize: isMobile ? 10 : 12),
+            ),
+            child: Text(text),
+          )
+        : ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: color,
+              foregroundColor: AppColors.onPrimary,
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 8 : 12,
+                vertical: isMobile ? 4 : 8,
+              ),
+              textStyle: TextStyle(fontSize: isMobile ? 10 : 12),
+              elevation: 0,
+            ),
+            child: Text(text),
+          );
   }
 }

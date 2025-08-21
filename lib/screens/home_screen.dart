@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:shopeasy/screens/billing_screen.dart';
+
 import 'management_screen.dart';
 
 void main() {
@@ -83,7 +85,6 @@ class CartProvider extends ChangeNotifier {
 
   void addProduct(Product product) {
     int existingIndex = _items.indexWhere((item) => item.product.id == product.id);
-
     if (existingIndex >= 0) {
       _items[existingIndex].quantity++;
     } else {
@@ -166,355 +167,526 @@ class _HomeScreenState extends State<HomeScreen> {
     'Broken Rice',
   ];
 
+  List<Product> get filteredProducts {
+    if (selectedCategory == 'All Rice') {
+      return products;
+    }
+    String filter = selectedCategory.replaceAll(' Rice', '');
+    return products.where((product) => product.name.contains(filter)).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return Row(
-            children: [
-              // Left Sidebar - Categories
-              Container(
-                width: 200,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E88E5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      spreadRadius: 1,
-                      blurRadius: 4,
-                      offset: const Offset(2, 0),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      child: const Text(
-                        'GrainMart POS',
-                        style: TextStyle(
+          if (constraints.maxWidth < 600) {
+            // Mobile layout
+            return _buildMobileLayout(context, constraints);
+          } else {
+            // Updated desktop layout with horizontal categories
+            return Row(
+              children: [
+                // Middle - Products and Search (expanded to take more space)
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    children: [
+                      // Top Navigation Bar with Title and Search
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
                           color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            const Text(
+                              'GrainMart POS',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            // Search Bar
+                            Expanded(
+                              child: Container(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const TextField(
+                                  decoration: InputDecoration(
+                                    hintText: 'Search items, barcode or SKU',
+                                    prefixIcon: Icon(Icons.search, color: Colors.grey),
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    // Categories
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: categories.length,
-                        itemBuilder: (context, index) {
-                          final category = categories[index];
-                          final isSelected = selectedCategory == category;
-                          return Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: ListTile(
-                              leading: const Icon(Icons.grain, color: Colors.white, size: 20),
-                              title: Text(
-                                category,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                ),
-                                overflow: TextOverflow.ellipsis,
+                      // Horizontal Categories
+                      SizedBox(
+                        height: 50,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: categories.length,
+                          itemBuilder: (context, index) {
+                            final category = categories[index];
+                            final isSelected = selectedCategory == category;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: FilterChip(
+                                avatar: const Icon(Icons.grain, size: 20),
+                                label: Text(category),
+                                selected: isSelected,
+                                onSelected: (selected) {
+                                  if (selected) {
+                                    setState(() {
+                                      selectedCategory = category;
+                                    });
+                                  }
+                                },
                               ),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                              onTap: () {
-                                setState(() {
-                                  selectedCategory = category;
-                                });
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Middle - Products and Search
-              Expanded(
-                flex: 3,
-                child: Column(
-                  children: [
-                    // Top Navigation Bar - Only Search bar
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
-                            spreadRadius: 1,
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          // Search Bar
-                          Expanded(
-                            child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: const TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'Search items, barcode or SKU',
-                                  prefixIcon: Icon(Icons.search, color: Colors.grey),
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Products Grid
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: LayoutBuilder(
-                          builder: (context, productConstraints) {
-                            // Calculate responsive columns based on available width
-                            int crossAxisCount = (productConstraints.maxWidth / 200).floor().clamp(1, 4);
-
-                            return GridView.builder(
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: crossAxisCount,
-                                crossAxisSpacing: 16,
-                                mainAxisSpacing: 16,
-                                childAspectRatio: 0.8,
-                              ),
-                              itemCount: products.length,
-                              itemBuilder: (context, index) {
-                                final product = products[index];
-                                return _buildProductCard(product);
-                              },
                             );
                           },
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Right Sidebar - Cart/Bills
-              AnimatedBuilder(
-                animation: cartProvider,
-                builder: (context, child) {
-                  return Container(
-                    width: constraints.maxWidth > 1200 ? 450 : 350,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: const Offset(-2, 0),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        // Header Icons Row - Fixed to full width
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border(
-                              bottom: BorderSide(color: Colors.grey[200]!),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _buildNavIcon(Icons.local_shipping, 'Delivery', () {}),
-                              _buildNavIcon(Icons.receipt, 'Bills', () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const BillingManagementPage()),
-                                );
-                              }),
-                              _buildNavIcon(Icons.book, 'Daybook', () {}),
-                              _buildNavIcon(Icons.pause_circle_outline, 'Hold', () {}),
-                              _buildNavIcon(Icons.inventory_2, 'Product', () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const ManagementScreen()),
-                                );
-                              }),
-                              _buildNavIcon(Icons.person, 'Customer', () {}),
-                              _buildNavIcon(Icons.inventory, 'Stock', () {}),
-                            ],
-                          ),
-                        ),
-
-                        // Customer Info
-                        Container(
+                      // Products Grid
+                      Expanded(
+                        child: Padding(
                           padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: Colors.grey[200]!),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                        hintText: 'Customer Name',
-                                        hintStyle: const TextStyle(fontSize: 14),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                      ),
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                        hintText: 'Mobile Number',
-                                        hintStyle: const TextStyle(fontSize: 14),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                      ),
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.edit, color: Colors.blue),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Cart Header
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            border: Border(
-                              bottom: BorderSide(color: Colors.grey[200]!),
-                            ),
-                          ),
-                          child: const Row(
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  'Item',
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                  overflow: TextOverflow.ellipsis,
+                          child: LayoutBuilder(
+                            builder: (context, productConstraints) {
+                              // Calculate responsive columns based on available width
+                              int crossAxisCount = (productConstraints.maxWidth / 200).floor().clamp(1, 4);
+                              return GridView.builder(
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 16,
+                                  childAspectRatio: 0.8,
                                 ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  'Qty',
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  'Price',
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                  textAlign: TextAlign.right,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              SizedBox(width: 40),
-                            ],
-                          ),
-                        ),
-
-                        // Cart Items
-                        Expanded(
-                          child: cartProvider.items.isEmpty
-                              ? const Center(
-                            child: Text(
-                              'No items in cart',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          )
-                              : ListView.builder(
-                            itemCount: cartProvider.items.length,
-                            itemBuilder: (context, index) {
-                              final item = cartProvider.items[index];
-                              return _buildCartItem(item);
+                                itemCount: filteredProducts.length,
+                                itemBuilder: (context, index) {
+                                  final product = filteredProducts[index];
+                                  return _buildProductCard(product);
+                                },
+                              );
                             },
                           ),
                         ),
-
-                        // Cart Summary
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: Colors.grey[200]!),
+                      ),
+                    ],
+                  ),
+                ),
+                // Right Sidebar - Cart/Bills
+                AnimatedBuilder(
+                  animation: cartProvider,
+                  builder: (context, child) {
+                    return Container(
+                      width: constraints.maxWidth > 1200 ? 450 : 350,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            spreadRadius: 1,
+                            blurRadius: 4,
+                            offset: const Offset(-2, 0),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          // Header Icons Row - Fixed to full width
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border(
+                                bottom: BorderSide(color: Colors.grey[200]!),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                _buildNavIcon(Icons.local_shipping, 'Delivery', () {}),
+                                _buildNavIcon(Icons.receipt, 'Bills', () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const BillingManagementPage()),
+                                  );
+                                }),
+                                _buildNavIcon(Icons.book, 'Daybook', () {}),
+                                _buildNavIcon(Icons.pause_circle_outline, 'Hold', () {}),
+                                _buildNavIcon(Icons.inventory_2, 'Product', () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const ManagementScreen()),
+                                  );
+                                }),
+                                _buildNavIcon(Icons.person, 'Customer', () {}),
+                                _buildNavIcon(Icons.inventory, 'Stock', () {}),
+                              ],
                             ),
                           ),
-                          child: Column(
-                            children: [
-                              _buildSummaryRow('Subtotal', '₹${cartProvider.subtotal.toStringAsFixed(2)}'),
-                              _buildSummaryRow('Discount', '-₹${cartProvider.discount.toStringAsFixed(2)}', color: Colors.red),
-                              _buildSummaryRow('Tax (5%)', '₹${cartProvider.tax.toStringAsFixed(2)}'),
-                              _buildSummaryRow('Round Off', '${cartProvider.roundOff >= 0 ? '+' : ''}₹${cartProvider.roundOff.toStringAsFixed(2)}'),
-                              const Divider(),
-                              _buildSummaryRow('Total', '₹${cartProvider.total.toStringAsFixed(2)}',
-                                  isTotal: true, color: Colors.green),
-                              const SizedBox(height: 16),
-
-                              // Action Buttons
-                              _buildActionButton('Hold', Colors.grey[400]!, cartProvider.items.isEmpty, () {}),
-                              const SizedBox(height: 8),
-                              _buildActionButton('Add Discount', Colors.blue, cartProvider.items.isEmpty, () {}),
-                              const SizedBox(height: 8),
-                              _buildActionButton('Confirm Payment', Colors.green, cartProvider.items.isEmpty, () {
-                                _showPaymentConfirmation();
-                              }),
-                            ],
+                          // Customer Info
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: Colors.grey[200]!),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                          hintText: 'Customer Name',
+                                          hintStyle: const TextStyle(fontSize: 14),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                        ),
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                          hintText: 'Mobile Number',
+                                          hintStyle: const TextStyle(fontSize: 14),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                        ),
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(Icons.edit, color: Colors.blue),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
-          );
+                          // Cart Header
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              border: Border(
+                                bottom: BorderSide(color: Colors.grey[200]!),
+                              ),
+                            ),
+                            child: const Row(
+                              children: [
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    'Item',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'Qty',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'Price',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                    textAlign: TextAlign.right,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(width: 40),
+                              ],
+                            ),
+                          ),
+                          // Cart Items
+                          Expanded(
+                            child: cartProvider.items.isEmpty
+                                ? const Center(
+                                    child: Text(
+                                      'No items in cart',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    itemCount: cartProvider.items.length,
+                                    itemBuilder: (context, index) {
+                                      final item = cartProvider.items[index];
+                                      return _buildCartItem(item);
+                                    },
+                                  ),
+                          ),
+                          // Cart Summary
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(color: Colors.grey[200]!),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                _buildSummaryRow('Subtotal', '₹${cartProvider.subtotal.toStringAsFixed(2)}'),
+                                _buildSummaryRow('Discount', '-₹${cartProvider.discount.toStringAsFixed(2)}', color: Colors.red),
+                                _buildSummaryRow('Tax (5%)', '₹${cartProvider.tax.toStringAsFixed(2)}'),
+                                _buildSummaryRow('Round Off', '${cartProvider.roundOff >= 0 ? '+' : ''}₹${cartProvider.roundOff.toStringAsFixed(2)}'),
+                                const Divider(),
+                                _buildSummaryRow('Total', '₹${cartProvider.total.toStringAsFixed(2)}',
+                                    isTotal: true, color: Colors.green),
+                                const SizedBox(height: 16),
+                                // Action Buttons
+                                _buildActionButton('Hold', Colors.grey[400]!, cartProvider.items.isEmpty, () {}),
+                                const SizedBox(height: 8),
+                                _buildActionButton('Add Discount', Colors.blue, cartProvider.items.isEmpty, () {}),
+                                const SizedBox(height: 8),
+                                _buildActionButton('Confirm Payment', Colors.green, cartProvider.items.isEmpty, () {
+                                  _showPaymentConfirmation();
+                                }),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            );
+          }
         },
       ),
+    );
+  }
+
+  Widget _buildMobileLayout(BuildContext context, BoxConstraints constraints) {
+    return Column(
+      children: [
+        // Top AppBar for mobile
+        AppBar(
+          title: const Text('GrainMart POS'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.shopping_cart),
+              onPressed: () {
+                // Show cart in a bottom sheet or navigate to cart screen
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => DraggableScrollableSheet(
+                    initialChildSize: 0.9,
+                    minChildSize: 0.5,
+                    maxChildSize: 0.9,
+                    expand: false,
+                    builder: (context, scrollController) => _buildCartSection(scrollController),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        // Search Bar
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const TextField(
+              decoration: InputDecoration(
+                hintText: 'Search items, barcode or SKU',
+                prefixIcon: Icon(Icons.search, color: Colors.grey),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+            ),
+          ),
+        ),
+        // Categories as horizontal scroll
+        SizedBox(
+          height: 50,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+              final category = categories[index];
+              final isSelected = selectedCategory == category;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: FilterChip(
+                  avatar: const Icon(Icons.grain, size: 20),
+                  label: Text(category),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    if (selected) {
+                      setState(() {
+                        selectedCategory = category;
+                      });
+                    }
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+        // Products Grid for mobile
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // 2 columns for mobile
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 0.7,
+              ),
+              itemCount: filteredProducts.length,
+              itemBuilder: (context, index) {
+                final product = filteredProducts[index];
+                return _buildProductCard(product);
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCartSection(ScrollController scrollController) {
+    return AnimatedBuilder(
+      animation: cartProvider,
+      builder: (context, child) {
+        return ListView(
+          controller: scrollController,
+          children: [
+            // Header Icons Row (adapted for mobile)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Wrap(
+                spacing: 8,
+                children: [
+                  _buildNavIcon(Icons.local_shipping, 'Delivery', () {}),
+                  _buildNavIcon(Icons.receipt, 'Bills', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const BillingManagementPage()),
+                    );
+                  }),
+                  _buildNavIcon(Icons.book, 'Daybook', () {}),
+                  _buildNavIcon(Icons.pause_circle_outline, 'Hold', () {}),
+                  _buildNavIcon(Icons.inventory_2, 'Product', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ManagementScreen()),
+                    );
+                  }),
+                  _buildNavIcon(Icons.person, 'Customer', () {}),
+                  _buildNavIcon(Icons.inventory, 'Stock', () {}),
+                ],
+              ),
+            ),
+            // Customer Info
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Customer Name',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Mobile Number',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
+            // Cart Items
+            if (cartProvider.items.isEmpty)
+              const Center(child: Text('No items in cart'))
+            else
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: cartProvider.items.length,
+                itemBuilder: (context, index) {
+                  final item = cartProvider.items[index];
+                  return _buildCartItem(item);
+                },
+              ),
+            // Cart Summary
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  _buildSummaryRow('Subtotal', '₹${cartProvider.subtotal.toStringAsFixed(2)}'),
+                  _buildSummaryRow('Discount', '-₹${cartProvider.discount.toStringAsFixed(2)}', color: Colors.red),
+                  _buildSummaryRow('Tax (5%)', '₹${cartProvider.tax.toStringAsFixed(2)}'),
+                  _buildSummaryRow('Round Off', '${cartProvider.roundOff >= 0 ? '+' : ''}₹${cartProvider.roundOff.toStringAsFixed(2)}'),
+                  const Divider(),
+                  _buildSummaryRow('Total', '₹${cartProvider.total.toStringAsFixed(2)}', isTotal: true, color: Colors.green),
+                  const SizedBox(height: 16),
+                  _buildActionButton('Hold', Colors.grey[400]!, cartProvider.items.isEmpty, () {}),
+                  const SizedBox(height: 8),
+                  _buildActionButton('Add Discount', Colors.blue, cartProvider.items.isEmpty, () {}),
+                  const SizedBox(height: 8),
+                  _buildActionButton('Confirm Payment', Colors.green, cartProvider.items.isEmpty, () {
+                    _showPaymentConfirmation();
+                  }),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -539,32 +711,30 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildNavIcon(IconData icon, String label, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, color: Colors.blue, size: 20),
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 10,
-                color: Colors.blue,
-                fontWeight: FontWeight.w500,
-              ),
-              overflow: TextOverflow.ellipsis,
+            child: Icon(icon, color: Colors.blue, size: 20),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10,
+              color: Colors.blue,
+              fontWeight: FontWeight.w500,
             ),
-          ],
-        ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
@@ -604,7 +774,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-
           // Product Info
           Expanded(
             flex: 2,
@@ -795,169 +964,165 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _showPaymentConfirmation() {
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-      return Dialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
           elevation: 8,
           child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
-              child: SingleChildScrollView(
+            constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
+            child: SingleChildScrollView(
               child: Container(
-              padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.green[50]!, Colors.white],
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-            // Header with icon
-            Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: Colors.green,
-              borderRadius: BorderRadius.circular(40),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.green.withOpacity(0.3),
-                  spreadRadius: 2,
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.green[50]!, Colors.white],
+                  ),
                 ),
-              ],
-            ),
-            child: const Icon(
-              Icons.payment,
-              color: Colors.white,
-              size: 40,
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Title
-          const Text(
-            'Payment Confirmation',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-
-          // Subtitle
-          Text(
-            'Please confirm your payment details',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-
-          // Payment details card
-          Container(
-          padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(12),
-    border: Border.all(color: Colors.grey[200]!),
-    boxShadow: [
-    BoxShadow(
-    color: Colors.grey.withOpacity(0.1),
-    spreadRadius: 1,
-    blurRadius: 4,
-    offset: const Offset(0, 2),
-    ),
-    ],
-    ),
-    child: Column(
-    children: [
-    _buildPaymentDetailRow('Total Items:', '${cartProvider.totalItems}', Icons.shopping_cart),
-    const SizedBox(height: 12),
-    _buildPaymentDetailRow('Subtotal:', '₹${cartProvider.subtotal.toStringAsFixed(2)}', Icons.calculate),
-      const SizedBox(height: 8),
-      _buildPaymentDetailRow('Discount:', '-₹${cartProvider.discount.toStringAsFixed(2)}', Icons.discount, color: Colors.red),
-      const SizedBox(height: 8),
-      _buildPaymentDetailRow('Tax (5%):', '₹${cartProvider.tax.toStringAsFixed(2)}', Icons.receipt),
-      const Divider(height: 24, thickness: 1.5),
-      _buildPaymentDetailRow('Total Amount:', '₹${cartProvider.total.toStringAsFixed(2)}', Icons.attach_money, isTotal: true),
-    ],
-    ),
-          ),
-              const SizedBox(height: 24),
-
-              // Action buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.grey[400]!),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Header with icon
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(40),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.green.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey,
-                        ),
+                      child: const Icon(
+                        Icons.payment,
+                        color: Colors.white,
+                        size: 40,
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        cartProvider.clearCart();
-                        _showSuccessMessage();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        elevation: 4,
+                    const SizedBox(height: 20),
+                    // Title
+                    const Text(
+                      'Payment Confirmation',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
-                      child: const Text(
-                        'Confirm Payment',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    // Subtitle
+                    Text(
+                      'Please confirm your payment details',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    // Payment details card
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey[200]!),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          _buildPaymentDetailRow('Total Items:', '${cartProvider.totalItems}', Icons.shopping_cart),
+                          const SizedBox(height: 12),
+                          _buildPaymentDetailRow('Subtotal:', '₹${cartProvider.subtotal.toStringAsFixed(2)}', Icons.calculate),
+                          const SizedBox(height: 8),
+                          _buildPaymentDetailRow('Discount:', '-₹${cartProvider.discount.toStringAsFixed(2)}', Icons.discount, color: Colors.red),
+                          const SizedBox(height: 8),
+                          _buildPaymentDetailRow('Tax (5%):', '₹${cartProvider.tax.toStringAsFixed(2)}', Icons.receipt),
+                          const Divider(height: 24, thickness: 1.5),
+                          _buildPaymentDetailRow('Total Amount:', '₹${cartProvider.total.toStringAsFixed(2)}', Icons.attach_money, isTotal: true),
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    // Action buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Colors.grey[400]!),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              cartProvider.clearCart();
+                              _showSuccessMessage();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation: 4,
+                            ),
+                            child: const Text(
+                              'Confirm Payment',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-              ),
-              ),
-          ),
-      );
-        },
+        );
+      },
     );
   }
 
@@ -1037,4 +1202,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
