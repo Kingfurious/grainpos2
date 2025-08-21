@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shopeasy/screens/home_screen.dart';
+import 'package:shopeasy/core/constants/app_colors.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const GrainMartPOSApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class GrainMartPOSApp extends StatelessWidget {
+  const GrainMartPOSApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +16,19 @@ class MyApp extends StatelessWidget {
       title: 'GrainMart POS',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: const Color(0xFFF9FAFB),
+        primarySwatch: MaterialColor(AppColors.info.value, <int, Color>{
+          50: AppColors.info.withOpacity(0.1),
+          100: AppColors.info.withOpacity(0.2),
+          200: AppColors.info.withOpacity(0.3),
+          300: AppColors.info.withOpacity(0.4),
+          400: AppColors.info.withOpacity(0.5),
+          500: AppColors.info.withOpacity(0.6),
+          600: AppColors.info.withOpacity(0.7),
+          700: AppColors.info.withOpacity(0.8),
+          800: AppColors.info.withOpacity(0.9),
+          900: AppColors.info,
+        }),
+        scaffoldBackgroundColor: AppColors.background,
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
@@ -31,7 +43,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const SplashScreen(),
+      home: const HomeScreen(),
     );
   }
 }
